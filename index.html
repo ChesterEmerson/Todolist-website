@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<body>
+    <p>TODO LIST</p>
+    <form class="add-lists"> 
+        <input type="text" name="item" placeholder="Add your todo.." required >
+        <input type="submit" value="SUBMIT">
+    </form>
+     
+    <div class="container">
+        <div class="list-todo">
+            <ul class="yours" id="yoursList">              
+                <li>addddd</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const addLists = document.querySelector('.add-lists');
+        const itemLists = document.querySelector('.yours');
+        const itemList = document.getElementById('yoursList');
+        const items = JSON.parse(localStorage.getItem('list')) || [];
+
+        function addList(e) {
+            e.preventDefault();
+            const text = (this.querySelector('[name=item]')).value; 
+            const item = { text, done: false };
+        
+        items.push(item);
+        todoList(items, itemLists);
+        localStorage.setItem('list', JSON.stringify(items));
+        this.reset();
+        }
+
+        function todoList(yours = [], yoursList) {
+            
+            yoursList.innerHTML = yours.map((your, i) => {
+                return `<li> 
+                    <input type="checkbox" data-index=${i} id="item${i}" ${your.done ? 'checked' : ''} />
+                    <label for="item${i}">${your.text}</label>
+                    <img src="trash-2.svg" class="delete">
+                    </li> `;
+
+            }).join('');
+        }
+        todoList(items, itemLists);
+
+        function toggleDone(e) {
+            if (!e.target.matches('input')) return;
+            const el = e.target;
+            const index = el.dataset.index;
+            items[index].done = !items[index].done;
+            localStorage.setItem('list', JSON.stringify(items));
+            todoList(items, itemLists);
+        }
+            
+        function removeItem(e) {
+            e.preventDefault();
+        if (e.target.classList.contains("delete")) {
+          if (confirm("Are you sure you want to delete this item?")) {
+            let li = e.target.parentNode;
+            const index = Array.from(itemList.children).indexOf(li);
+            items.splice(index, 1);
+            localStorage.setItem('list', JSON.stringify(items));
+            todoList(items, itemList);
+          }
+         }
+        }
+        addLists.addEventListener('submit', addList);
+        itemLists.addEventListener('click', toggleDone);
+        itemList.addEventListener('click', removeItem);
+        
+    </script>
+
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,200;1,300;1,400&family=Poppins:wght@400;500;800&display=swap');
+
+        html {
+            font-family: sans-serif;
+            background: rgb(248, 162, 1);
+            background: linear-gradient(90deg, rgba(164, 49, 230, 0.699) 20%, rgba(252, 176, 69, 0.836) 74%);
+        }
+        
+        img {
+            float: right;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        img:hover {
+            border-radius: 10%;
+            padding: 1px;
+            background-color: #be393971;
+        }
+
+        p {
+            display: block;
+            text-align: center;
+            justify-content: center;
+            font-family: Poppins;
+            font-size: 50px;
+            font-weight: 800;
+            color: #d3dbe7;
+            margin: 20px;                   
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 10px auto;
+            background: #ffffff;
+            border-radius: 2px;
+            box-shadow: 10px 5px 0 rgba(0,0,0,0.1);
+            padding: 25px;       
+        }
+
+        .list-todo {
+            text-align: justify;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .plates {
+            margin: 0;
+            padding: 10px 0;
+            text-align: left;
+            list-style: none;
+            align-items: center;
+        }
+
+        .list-todo:last-child {
+            border: 0;
+        }
+
+        .add-lists {
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+        }
+
+        .add-lists input {
+            outline: 0;            
+            padding: 20px;
+            border: 2px solid rgb(255, 255, 255);
+            background: rgb(161, 44, 161);   
+            border-radius: 6px;         
+            color: #fff;
+            cursor: pointer;
+            font-family: sans-serif;
+            font-weight: 900;
+        }
+
+        .add-lists input:hover {
+            background: #fff;
+            color: #050608;
+            border: 2px solid  rgba(179, 52, 179, 0.884);
+            transition: opacity -10s;
+        }
+
+        input:checked + ul {
+            background: #f9f9f9;         
+        }
+
+        input:checked + label {
+            text-decoration: line-through; 
+        }
+
+        label {
+            border-left: 1px solid #ce1515a1;   
+        }
+    
+        input[type="checkbox"] {
+            margin: 0 2px 0 0;
+            cursor:pointer;
+        }
+     
+        li {
+            border-bottom: 1px solid #426cc081;
+            list-style-type: none;
+            word-wrap: break-word;
+            max-width: 100%;          
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            transition: background 0.2s;
+            flex: 1;
+            font-family: 'helvetica neue';
+            font-size: 20px;
+            font-weight: 200;
+            list-style-type: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+          @media screen and (max-width: 600px) {
+            li {
+                font-size: 17px;
+            }
+          }
+
+    </style>
+</body>
+</html>
